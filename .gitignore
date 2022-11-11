@@ -1,2 +1,7 @@
 *.env
 __init__.py
+.ipynb_checkpoints
+__init__
+__pycache__
+__pycache__/*
+__*

@@ -1,7 +1,7 @@
-# PremierLeagueAnalysis
+# Soccer Odds Analysis : 2022 WorldCup and EPL
 
 ## PURPOSE : 
-To provide data driven insights into upcoming soccer games in the English Premier League.
+To provide data driven insights into upcoming soccer games during the 2022 World Cup and '22-'23  English Premier League.
 
 ## STATEMENT OF WORK
 

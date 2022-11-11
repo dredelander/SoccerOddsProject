@@ -1,17 +1,22 @@
 import requests
 import os
 import pandas as pd
+from dotenv import load_dotenv
+load_dotenv()
 
 
 API_KEY = os.getenv('ODDS_API_KEY')
+EPL_ODDS_URL =os.getenv('EPL_ODDS_URL')
+WC_ODDS_URL = os.getenv('WC_ODDS_URL')
 
-def get_odds_data():
+
+def get_EPL_odds_data():
     '''
         With a valid API key, this function retrieves the any live games as well as the next 8 upcoming games across 
         the English Premier League. (Soccer ;)
     '''
     sports_response = requests.get(
-        'https://api.the-odds-api.com/v4/sports/soccer_epl/odds/?regions=uk&bookmakers=williamhill', 
+        EPL_ODDS_URL, 
         params={
             'api_key': API_KEY,        
         }
