@@ -1,13 +1,15 @@
 import requests
 import os
 import pandas as pd
+import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
 
 
-API_KEY = os.getenv('ODDS_API_KEY')
-EPL_ODDS_URL =os.getenv('EPL_ODDS_URL')
-WC_ODDS_URL = os.getenv('WC_ODDS_URL')
+API_KEY = st.secrets["ODDS_API_KEY"]
+# EPL_ODDS_URL =os.getenv('EPL_ODDS_URL')
+EPL_ODDS_URL =st.secrets["EPL_ODDS_URL"]
+WC_ODDS_URL = st.secrets["WC_ODDS_URL"]
 
 
 def get_EPL_odds_data():

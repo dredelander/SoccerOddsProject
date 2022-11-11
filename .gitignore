@@ -5,3 +5,4 @@ __init__
 __pycache__
 __pycache__/*
 __*
+.streamlit/secrets.toml
