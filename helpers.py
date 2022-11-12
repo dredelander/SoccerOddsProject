@@ -7,10 +7,11 @@ load_dotenv()
 
 
 API_KEY = st.secrets["ODDS_API_KEY"]
-# EPL_ODDS_URL =os.getenv('EPL_ODDS_URL')
 EPL_ODDS_URL =st.secrets["EPL_ODDS_URL"]
 WC_ODDS_URL = st.secrets["WC_ODDS_URL"]
 
+
+players_df = pd.read_csv('./data/players_22.csv')
 
 def get_EPL_odds_data():
     '''
@@ -46,5 +47,25 @@ def get_EPL_odds_data():
         odds_df['match_start'] = pd.to_datetime(odds_df['match_start'])
         odds_df['match_start'] = odds_df['match_start'].dt.tz_convert('EST')
 
-        return odds_df
+        # list_teams = [team for team in odds_df['home_team']] + [team for team in odds_df['away_team']]
+        team_list = []
+        team_list.append('Select your team')
+        for team in list(odds_df['home_team']):
+            if team not in team_list:
+                team_list.append(team)
+        for team in list(odds_df['away_team']):
+            if team not in team_list:
+                team_list.append(team)
+        
+        return odds_df, team_list
 
+
+def get_team_logo(team_name):
+    team_logo = players_df.loc[players_df['club_name'].str.contains(team_name)== True].head(1)['club_logo_url'].values[0]
+    return team_logo
+
+def load_lottieurl(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
