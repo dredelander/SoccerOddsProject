@@ -16,6 +16,8 @@ FD_EPL_STANDINGS_URL= st.secrets["FD_EPL_STANDINGS_URL"]
 
 
 players_df = pd.read_csv('./data/players_22.csv')
+sec_players_df = pd.read_csv('./data/players_fifa23.csv')
+players_short_df = sec_players_df[['FullName', 'Club','BestPosition','Overall','ValueEUR','Age','IntReputation','NationalTeam']]
 
 def get_EPL_odds_data():
     '''
@@ -123,3 +125,16 @@ def get_epl_standings_df():
     dic_epl_table ={'Team':team_names,'Points':team_points,'Games Played':team_played_count,'Form':team_form, 'Goal Difference':team_goal_dif}
     epl_table_df = pd.DataFrame(dic_epl_table)
     return epl_table_df
+
+def get_team_df(name):
+    team_df =players_short_df.loc[players_short_df['Club'].str.contains(name)== True]
+    return team_df
+
+def get_team_fifa_info(team):
+    team_df = get_team_df(team)
+    top_player = team_df.sort_values(by='Overall', ascending =False).head(1)
+    avg_overall = round(team_df.head(16)['Overall'].mean(),2)
+    top_3_int_players = team_df.sort_values(by='IntReputation', ascending =False).head(3)
+    top16_value = "${:,.2f}".format(round(team_df.sort_values(by='ValueEUR', ascending =False).head(16)['ValueEUR'].sum(),2))
+
+    return top_player, avg_overall,top_3_int_players, top16_value

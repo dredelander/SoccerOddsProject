@@ -16,6 +16,7 @@ epl_top_scorers = get_epl_top_scorers_df()
 epl_standings = get_epl_standings_df()
 
 
+
 ### Header and NavBar
 
 col1, col2, col3 ,col4,col5= st.columns(5)
@@ -52,7 +53,7 @@ if selected == 'World Cup 2022':
     wc_data= st.sidebar.radio(
         "Set EPL data to view 👉",
         key="visibility",
-        options=["Standings", "Top 10 Scorers", "Odds and Game Times", "Fifa 2022 Team Info"],
+        options=["Standings", "Top 10 Scorers", "Odds and Game Times", "FIFA 2023 Team Info"],
         index=0,
         label_visibility='hidden'
     )
@@ -70,9 +71,24 @@ elif selected == 'English Premier League':
     if epl_data == 'Fifa 2022 Team Info':
         epl_team = st.sidebar.selectbox('Select a team FIFA 22 Stats:',(epl_teams_list))
         if epl_team and epl_team != 'Select your team':
-            print(epl_team)
-            st.image(get_team_logo(epl_team))
-    
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.image(get_team_logo(epl_team.replace('and','&'))) 
+            with col2:
+                st.subheader(epl_team)
+            epl_top_player, epl_avg_overall,epl_top_3_int_players, epl_top16_value = get_team_fifa_info(epl_team.replace('and','&'))
+            st.subheader('Top player')
+            epl_top_player
+            st.write('')
+            st.subheader('Value of top 16 players')
+            epl_top16_value
+            st.write('')
+            st.subheader('Overall rating of top 16 players')
+            epl_avg_overall
+            st.write('')
+            st.subheader('Top 3 international players')
+            epl_top_3_int_players
 
 
 if selected == 'English Premier League':
