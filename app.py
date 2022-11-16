@@ -52,21 +52,49 @@ if selected == 'World Cup 2022':
     wc_data= st.sidebar.radio(
         "Set EPL data to view 👉",
         key="world_cup",
-        options=["Standings", "Top 10 Scorers", "Odds and Game Times", "FIFA 2023 Team Info"],
+        options=["Standings", "Top 10 Scorers", "Odds and Game Times", "See Previous Match Ups"],
         index=0,
         label_visibility='hidden'
     )
-    if wc_data == 'FIFA 2023 Team Info':
-        wc_team = st.sidebar.selectbox('Select a team FIFA 23 Stats:',(wc_team_list))
-        if wc_team and wc_team != 'Select your team':
-            col1, col2 = st.columns(2)
-            with col1:
-                image_wc = get_team_logo(wc_team.replace('and','&'),'wc')
-                if image_wc != 'Logo/Flag is not Available':
-                    st.image(image_wc) 
-                
-            with col2:
-                st.subheader(wc_team)
+    if wc_data == 'See Previous Match Ups':
+        home_team = st.sidebar.selectbox('Home Team:',(wc_team_list))
+        away_team = st.sidebar.selectbox('Away Team:',(wc_team_list))
+        if home_team and home_team != 'Select your team' and away_team and away_team != 'Select your team':
+            if home_team == away_team:
+                st.write('Please select diferent teams')
+            else:
+                try:
+                    hist_df, tt_wins, tt_loss, ties, games,num_home_games, num_away_games = get_past_results(home_team, away_team)
+
+                    if len(hist_df) > 0:
+                        col1, col2,col3 = st.columns(3)
+                        with col1:
+                            st.write('')
+                            st.title(str(games) + ' games played')
+                            
+                        with col2:
+                            
+                            st.write('')
+                            st.subheader(str(tt_wins) + ' home wins for '  +home_team+ ' in ' + str(num_home_games)+' games.')
+                            st.subheader(str(tt_loss) + ' home losses for '  +home_team + ' in ' + str(num_away_games)+' games.')
+                            st.subheader(str(ties) + ' ties in total.')
+                            
+                        with col3:
+                            image_wc_home = get_team_logo(home_team.replace('and','&'),'wc')
+                            if image_wc_home != 'Logo/Flag is not Available':
+                                st.image(image_wc_home) 
+                            st.subheader(home_team)
+                            st.write('')
+                            image_wc = get_team_logo(away_team.replace('and','&'),'wc')
+                            if image_wc != 'Logo/Flag is not Available':
+                                st.image(image_wc) 
+                            st.subheader(away_team)
+
+                        st.write(hist_df)
+                    else:
+                        'No data available for this match up'
+                except ValueError:
+                    st.write('No data available for this match up')
 
 elif selected == 'English Premier League':
 
@@ -138,9 +166,12 @@ if selected == 'World Cup 2022':
     
     if wc_data == 'Odds and Game Times':
         st.write(wc_odds_df)
-    # if epl_data == 'Top 10 Scorers':
-        # epl_top_scorers = get_epl_top_scorers_df()
-        # st.write(epl_top_scorers)
+    if wc_data == 'Top 10 Scorers':
+        wc_top_scorers = get_wc_top_scores()
+        if len(wc_top_scorers) >5:
+            st.write(wc_top_scorers)
+        else: 
+            st.write('No goal scorers in tournament yet')
     if wc_data == 'Standings':
         
         wc_standings = get_wc_standings_df()

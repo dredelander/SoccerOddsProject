@@ -18,10 +18,9 @@ WC_TOP_SCORERS_URL = st.secrets["WC_TOP_SCORERS_URL"]
 
 
 players_df = pd.read_csv('./data/players_short_csv.csv')
-# players_df = players_df[['club_name','club_logo_url','nationality_name' ,'nation_flag_url']]
-# players_df.to_csv('./data/players_short_csv.csv', index=False)
 sec_players_df = pd.read_csv('./data/players_fifa23.csv')
 players_short_df = sec_players_df[['FullName', 'Club','BestPosition','Overall','ValueEUR','Age','IntReputation','NationalTeam']]
+fifa_df= pd.read_csv('./data/fifa_results.csv')
 
 def get_WC_odds_data():
     '''
@@ -172,6 +171,23 @@ def get_epl_top_scorers_df():
     top_epl_scorers_df.set_index('Player Name')
     return top_epl_scorers_df
 
+def get_wc_top_scores():
+    top_wc_scorers = get_football_data(WC_TOP_SCORERS_URL, FD_API_KEY)
+    players_top_ten=[]
+    teams_tops_scorers =[]
+    number_goals =[]
+    number_assists=[]
+    for player in top_wc_scorers['scorers']:
+        print(player['assists'])
+        players_top_ten.append((player['player']['name']))
+        teams_tops_scorers.append((player['team']['name']))
+        number_goals.append(player['goals'])
+        number_assists.append(player['assists'])
+    dic_top_wc_scorers = {'Player Name': players_top_ten,'Team': teams_tops_scorers, 'Goals':number_goals,'Assists':number_assists}
+    top_wc_scorers_df = pd.DataFrame(dic_top_wc_scorers)
+    top_wc_scorers_df.set_index('Player Name')
+
+    return top_wc_scorers_df
 
 def get_epl_standings_df():
     epl_standings = get_football_data(FD_EPL_STANDINGS_URL, FD_API_KEY)
@@ -224,3 +240,21 @@ def get_wc_standings_df():
     dic_wc_table ={'Team':team_names,'Points':team_points,'Games Played':team_played_count,'Form':team_form, 'Goal Difference':team_goal_dif}
     wc_table_df = pd.DataFrame(dic_wc_table)
     return wc_table_df
+
+def get_past_results(team1,team2):
+    df = fifa_df.loc[((fifa_df['home_team'].str.contains(team1)== True )& (fifa_df['away_team'].str.contains(team2)== True)) | ((fifa_df['away_team'].str.contains(team1)== True )& (fifa_df['home_team'].str.contains(team2)== True))]
+    team_1_home_wins = fifa_df.loc[((fifa_df['home_team'].str.contains(team1)== True )& (fifa_df['away_team'].str.contains(team2)== True)) & (fifa_df['home_score'] > fifa_df['away_score'])]
+    team_1_away_wins = fifa_df.loc[((fifa_df['away_team'].str.contains(team1)== True )& (fifa_df['home_team'].str.contains(team2)== True)) & (fifa_df['home_score'] < fifa_df['away_score'])]
+    ties = fifa_df.loc[(((fifa_df['home_team'].str.contains(team1)== True )& (fifa_df['away_team'].str.contains(team2)== True)) | ((fifa_df['away_team'].str.contains(team1)== True )& (fifa_df['home_team'].str.contains(team2)== True)))& (fifa_df['home_score'] == fifa_df['away_score'])]
+    num_ties = len(ties)
+    tt_wins_team1 = len(team_1_away_wins) + len(team_1_home_wins)
+    tt_loss_team1 = len(df) - tt_wins_team1 - num_ties
+    num_games=len(df)
+    num_home_games = len(df.loc[df['home_team']== team1])
+    num_away_games = len(df.loc[df['away_team']== team1])
+    if len(df) >0:
+        df = df.sort_values('date', ascending =False)
+        df.set_index('date', inplace=True)
+        return df, tt_wins_team1, tt_loss_team1 , num_ties, num_games, num_home_games, num_away_games
+    else:
+        return 'Not historical match history available'
