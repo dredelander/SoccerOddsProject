@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-API_KEY = st.secrets["ODDS_API_KEY"]
+API_KEY = st.secrets["ODDS_API_KEY_2"]
 EPL_ODDS_URL =st.secrets["EPL_ODDS_URL"]
 WC_ODDS_URL = st.secrets["WC_ODDS_URL"]
 FD_API_KEY = st.secrets["FD_API_KEY"]
